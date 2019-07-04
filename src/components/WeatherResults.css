@@ -1,0 +1,62 @@
+ul,
+li {
+  list-style: none;
+}
+
+.results {
+  margin: 20px;
+}
+
+.weather-alien {
+  position: relative;
+}
+
+.alien {
+  bottom: 0;
+  position: fixed;
+  width: 45%;
+  right: 33%;
+  animation: alien 5s infinite alternate;
+}
+
+.weather-icon {
+  position: absolute;
+  animation: weatherIcon 2s infinite alternate;
+  width: 20%;
+}
+
+@-webkit-keyframes weatherIcon {
+  from {
+    transform: rotate(20deg);
+  }
+  to {
+    transform: rotate(-20deg);
+  }
+}
+
+@-webkit-keyframes alien {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes weatherIcon {
+  from {
+    transform: rotate(20deg);
+  }
+  to {
+    transform: rotate(-20deg);
+  }
+}
+
+@keyframes alien {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}

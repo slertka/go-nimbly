@@ -1,4 +1,5 @@
 import React from "react";
+import "./App.css";
 
 // Components
 import WeatherForm from "./components/WeatherForm";
@@ -10,8 +11,12 @@ class App extends React.Component {
     this.state = {
       locationQuery: "",
       dateQuery: "",
-      location: [],
-      weather: []
+      location: {},
+      weather: {},
+      fetchingData: false,
+      fetchError: false,
+      fetchErrMessage: "",
+      fetchSuccess: false
     };
   }
 
@@ -30,19 +35,62 @@ class App extends React.Component {
   // get where on earth ID
   getWOEID = e => {
     e.preventDefault();
+
+    // Clear existing data in state
+    this.setState({
+      fetchingData: true,
+      fetchError: false,
+      fetchSuccess: false,
+      fetchErrMessage: ""
+    });
+
     // Check if input contains space
     const locationString = this.state.locationQuery.split(" ").join("+");
     // Location Search
     const locationUrl = `https://cors-anywhere.herokuapp.com/https://www.metaweather.com/api/location/search?query=${locationString}`;
+
     // set WOEID
     fetch(locationUrl)
-      .then(res => res.json())
+      .then(res => {
+        this.setState({
+          fetchingData: true,
+          fetchError: false,
+          location: {},
+          weather: {}
+        });
+        return res.json();
+      })
       .then(resj => {
-        this.setState({ location: resj });
-        this.state.location.forEach(loc =>
-          this.getWeather(loc.woeid, this.state.dateQuery, loc.title)
+        // verify response
+        if (resj.length === 0) {
+          this.setState({
+            fetchingData: false,
+            fetchError: true,
+            fetchErrMessage: "Could not find location, please try again."
+          });
+        } else if (resj.length > 1) {
+          this.setState({
+            fetchingData: false,
+            fetchError: true,
+            fetchErrMessage:
+              "Location returned multiple results. Please be more specific to see the Weather Alien."
+          });
+        } else {
+          this.setState({ location: resj[0] });
+        }
+      })
+      .then(() => {
+        this.getWeather(
+          this.state.location.woeid,
+          this.state.dateQuery,
+          this.state.location.title
         );
-      });
+      })
+      .catch(
+        this.setState({
+          fetchingData: false
+        })
+      );
   };
 
   // get consolidated weather
@@ -55,27 +103,57 @@ class App extends React.Component {
     const weatherUrl = `https://cors-anywhere.herokuapp.com/https://www.metaweather.com/api/location/${woeid}/${year}/${month}/${day}`;
     fetch(weatherUrl)
       .then(res => res.json())
-      .then(resj =>
+      .then(resj => {
+        // check if date is valid
+        if (resj.length === 0) {
+          this.setState({
+            fetchingData: false,
+            fetchError: true,
+            fetchErrMessage:
+              "No weather data for date choosen. Please select another date."
+          });
+        } else {
+          this.setState({
+            weather: { ...resj[0], title, woeid },
+            fetchingData: false,
+            fetchSuccess: true
+          });
+        }
+      })
+      .catch(() => {
         this.setState({
-          weather: [...this.state.weather, { ...resj[0], title, woeid }]
-        })
-      );
+          fetchingData: false
+        });
+      });
   };
 
   render() {
     return (
       <div className="App">
         <h1>Which Alien Ruled the Weather?</h1>
-        <p>
-          Enter a location and date to see which Alien ruled the weather that
-          day.
-        </p>
         <WeatherForm
           setLocation={e => this.setLocation(e)}
           setDate={e => this.setDate(e)}
           getWOEID={e => this.getWOEID(e)}
         />
-        <WeatherResults weather={this.state.weather} />
+        {this.state.fetchError ? (
+          <div className="error">{this.state.fetchErrMessage} </div>
+        ) : (
+          ""
+        )}
+        {this.state.fetchingData ? (
+          <div className="error">Looking for Aliens...</div>
+        ) : (
+          ""
+        )}
+        {this.state.fetchSuccess ? (
+          <WeatherResults
+            weather={this.state.weather}
+            className={this.state.fetchingData ? "hidden" : ""}
+          />
+        ) : (
+          ""
+        )}
       </div>
     );
   }

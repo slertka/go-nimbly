@@ -1,0 +1,12 @@
+.App {
+  text-align: center;
+}
+
+.error {
+  background-color: midnightblue;
+  color: white;
+  width: 50%;
+  border-radius: 10px;
+  margin: 20px auto;
+  padding: 5px;
+}

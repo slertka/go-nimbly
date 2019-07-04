@@ -1,27 +1,41 @@
 import React from "react";
+import "./WeatherResults.css";
 
 export default class WeatherResults extends React.Component {
   render() {
-    const results = this.props.weather.map(loc => {
-      return (
-        <li>
-          <p>location: {loc.title}</p>
-          <p>Weather: {loc.weather_state_name}</p>
-          <p>
-            Alien:{" "}
-            <img
-              src={`https://robohash.org/${loc.woeid}+${loc.applicable_date}+${
-                loc.weather_state_abbr
-              }.png`}
-            />
-          </p>
-        </li>
-      );
-    });
+    const weather = this.props.weather.weather_state_name
+      ? this.props.weather.weather_state_name
+          .split(" ")
+          .map(char => char.charAt(0).toLowerCase() + char.slice(1))
+          .join(" ")
+      : "";
 
     return (
-      <div>
-        <ul>{results}</ul>
+      <div className="results">
+        <p>
+          In {this.props.weather.title}, this alien decided the weather shall
+          have {weather}.
+        </p>
+        <div className="weather-alien">
+          <img
+            src={`https://www.metaweather.com/static/img/weather/png/${
+              this.props.weather.weather_state_abbr
+            }.png`}
+            alt={`Weather icon for ${
+              this.props.weather.weather_state_name
+            } in ${this.props.weather.title}`}
+            className="weather-icon"
+          />
+          <img
+            src={`https://robohash.org/${this.props.weather.woeid}+${
+              this.props.weather.applicable_date
+            }+${this.props.weather.weather_state_abbr}.png`}
+            alt={`Robohash alien for ${this.props.weather.title} and ${
+              this.props.weather.weather_state_name
+            }`}
+            className="alien"
+          />
+        </div>
       </div>
     );
   }
