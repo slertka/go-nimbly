@@ -20,6 +20,7 @@ class App extends React.Component {
     };
   }
 
+  // set state based on user input to use in fetch
   setLocation = e => {
     this.setState({
       locationQuery: e.target.value
@@ -41,27 +42,21 @@ class App extends React.Component {
       fetchingData: true,
       fetchError: false,
       fetchSuccess: false,
-      fetchErrMessage: ""
+      fetchErrMessage: "",
+      location: {},
+      weather: {}
     });
 
-    // Check if input contains space
+    // Check if input contains space to create string query
     const locationString = this.state.locationQuery.split(" ").join("+");
     // Location Search
     const locationUrl = `https://cors-anywhere.herokuapp.com/https://www.metaweather.com/api/location/search?query=${locationString}`;
 
-    // set WOEID
+    // set WOEID in state
     fetch(locationUrl)
-      .then(res => {
-        this.setState({
-          fetchingData: true,
-          fetchError: false,
-          location: {},
-          weather: {}
-        });
-        return res.json();
-      })
+      .then(res => res.json())
       .then(resj => {
-        // verify response
+        // verify data was returned from the response; otherwise, send an error
         if (resj.length === 0) {
           this.setState({
             fetchingData: false,
@@ -69,6 +64,7 @@ class App extends React.Component {
             fetchErrMessage: "Could not find location, please try again."
           });
         } else if (resj.length > 1) {
+          // verify only one location was found based on user search query; otherwise, send error
           this.setState({
             fetchingData: false,
             fetchError: true,
@@ -80,6 +76,7 @@ class App extends React.Component {
         }
       })
       .then(() => {
+        // get the weather from the woeid and date from user
         this.getWeather(
           this.state.location.woeid,
           this.state.dateQuery,
@@ -95,6 +92,7 @@ class App extends React.Component {
 
   // get consolidated weather
   getWeather = (woeid, date, title) => {
+    // break out dateQuery to use in fetch URL
     let year = date.substr(0, 4);
     let month = date.substr(5, 2);
     let day = date.substr(8, 2);

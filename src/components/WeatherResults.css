@@ -7,30 +7,33 @@ li {
   margin: 20px;
 }
 
-.weather-alien {
-  position: relative;
-}
-
 .alien {
   bottom: 0;
   position: fixed;
   width: 45%;
-  right: 33%;
+  right: 25%;
   animation: alien 5s infinite alternate;
+}
+
+.weather-container {
+  position: relative;
 }
 
 .weather-icon {
   position: absolute;
-  animation: weatherIcon 2s infinite alternate;
-  width: 20%;
+  width: 33%;
+  opacity: 1;
+  animation-name: weather;
+  animation-duration: 3s;
+  animation-timing-function: ease-in;
 }
 
-@-webkit-keyframes weatherIcon {
-  from {
-    transform: rotate(20deg);
+@-webkit-keyframes weather {
+  0% {
+    opacity: 0;
   }
-  to {
-    transform: rotate(-20deg);
+  100% {
+    opacity: 1;
   }
 }
 
@@ -43,12 +46,12 @@ li {
   }
 }
 
-@keyframes weatherIcon {
+@keyframes weather {
   from {
-    transform: rotate(20deg);
+    opacity: 0;
   }
   to {
-    transform: rotate(-20deg);
+    opacity: 1;
   }
 }
 
