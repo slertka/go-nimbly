@@ -1,5 +1,6 @@
 import React from "react";
 import "./App.css";
+import moment from "moment";
 
 // Components
 import WeatherForm from "./components/WeatherForm";
@@ -93,9 +94,9 @@ class App extends React.Component {
   // get consolidated weather
   getWeather = (woeid, date, title) => {
     // break out dateQuery to use in fetch URL
-    let year = date.substr(0, 4);
-    let month = date.substr(5, 2);
-    let day = date.substr(8, 2);
+    let year = moment(date).format("YYYY");
+    let month = moment(date).format("MM");
+    let day = moment(date).format("DD");
 
     // Weather Search
     const weatherUrl = `https://cors-anywhere.herokuapp.com/https://www.metaweather.com/api/location/${woeid}/${year}/${month}/${day}`;

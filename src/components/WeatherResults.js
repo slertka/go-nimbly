@@ -1,5 +1,6 @@
 import React from "react";
 import "./WeatherResults.css";
+import moment from "moment";
 
 export default class WeatherResults extends React.Component {
   render() {
@@ -11,51 +12,9 @@ export default class WeatherResults extends React.Component {
       : "";
 
     // format date
-    let date;
-    let year = this.props.weather.applicable_date.substr(0, 4);
-    let month = this.props.weather.applicable_date.substr(5, 2);
-    let day = this.props.weather.applicable_date.substr(8, 2);
-
-    switch (month) {
-      case "01":
-        month = "January";
-        break;
-      case "02":
-        month = "February";
-        break;
-      case "03":
-        month = "March";
-        break;
-      case "04":
-        month = "April";
-        break;
-      case "05":
-        month = "May";
-        break;
-      case "06":
-        month = "June";
-        break;
-      case "07":
-        month = "July";
-        break;
-      case "08":
-        month = "August";
-        break;
-      case "09":
-        month = "September";
-        break;
-      case "10":
-        month = "October";
-        break;
-      case "11":
-        month = "November";
-        break;
-      default:
-        month = "December";
-        break;
-    }
-
-    date = `${month} ${day}, ${year}`;
+    let date = moment(this.props.weather.applicable_date).format(
+      "MMMM Do YYYY"
+    );
 
     return (
       <div className="results">
